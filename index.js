@@ -78,7 +78,7 @@ var getFullPaths = function(prefixRegex, urlRegex, basePath, cssContent) {
 var sprite = function(options, cssContent, callback) {
   options = extend({}, defaultOptions, options);
 
-  var prefixRegex = options.urlRegex ? new RegExp("") : new RegExp(escapeRegExp(options.prefix));
+  var prefixRegex = new RegExp(escapeRegExp(options.prefix));
   var urlRegex = options.urlRegex || new RegExp("url\\((?:'|\")?(" + escapeRegExp(options.prefix) + ".*?)(?:'|\")?\\)(?:(.*?|\\n*?|\\r*?))(;|})", 'gi');
 
   var fullPaths = getFullPaths(prefixRegex, urlRegex, options.path, cssContent);
