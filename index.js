@@ -63,7 +63,8 @@ var replaceUrlsWithSprite = function(urlRegex, prefixRegex, options, content, co
 var defaultOptions = {
   name: 'sprite.png',
   path: 'images/sprites',
-  prefix: '/images/sprites/'
+  prefix: '/images/sprites/',
+  urlRegex: null
 };
 
 var getFullPaths = function(prefixRegex, urlRegex, basePath, cssContent) {
@@ -77,8 +78,8 @@ var getFullPaths = function(prefixRegex, urlRegex, basePath, cssContent) {
 var sprite = function(options, cssContent, callback) {
   options = extend({}, defaultOptions, options);
 
-  var prefixRegex = new RegExp(escapeRegExp(options.prefix));
-  var urlRegex = new RegExp("url\\((?:'|\")?(" + escapeRegExp(options.prefix) + ".*?)(?:'|\")?\\)(?:(.*?|\\n*?|\\r*?))(;|})", 'gi');
+  var prefixRegex = options.urlRegex ? new RegExp("") : new RegExp(escapeRegExp(options.prefix));
+  var urlRegex = options.urlRegex || new RegExp("url\\((?:'|\")?(" + escapeRegExp(options.prefix) + ".*?)(?:'|\")?\\)(?:(.*?|\\n*?|\\r*?))(;|})", 'gi');
 
   var fullPaths = getFullPaths(prefixRegex, urlRegex, options.path, cssContent);
 

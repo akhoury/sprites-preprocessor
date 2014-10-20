@@ -16,7 +16,19 @@ var sprites = require('sprites-preprocessor');
 var options = {
   name: 'sprite.png',
   path: 'images/sprites',
-  prefix: '/images/sprites/'
+  prefix: '/images/sprites/',
+
+
+  // advanced, pass in custom url regex but make sure to pass in an empty prefix if you're including your prefix rule in this regex
+  urlRegex: null // used to override the url Regex built using the prefix
+
+  /* for example: if you want to skip all base64 encoded urls and all the gif images, use something like this
+
+	prefix: "",
+	// probably not the most optimized regex, but it works
+  	urlRegex: new RegExp("url\\((?:'|\")?(?!(data:[^'\"\\)]+))(?!([^'\"\\)]+gif))([^'\"\\)]+)(?:'|\")?\\)(?:(.*?|\n*?|\r*?))(;|})", "gi")
+
+  */
 };
 
 sprites(options, 'body { background: url(/images/sprite/file.png); }', function(err, css, image) {
