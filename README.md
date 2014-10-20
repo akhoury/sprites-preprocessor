@@ -26,7 +26,14 @@ var options = {
 
 	prefix: "",
 	// probably not the most optimized regex, but it works
-  	urlRegex: new RegExp("url\\((?:'|\")?(?!(data:[^'\"\\)]+))(?!([^'\"\\)]+gif))([^'\"\\)]+)(?:'|\")?\\)(?:(.*?|\n*?|\r*?))(;|})", "gi")
+  	urlRegex: new RegExp("url\\((?:'|\")?((?!(data:[^'\"\\)]+))(?!([^'\"\\)]+gif))([^'\"\\)]+))(?:'|\")?\\)(?:(.*?|\n*?|\r*?))(;|})", "gi")
+
+    // also make sure your URL match indexes matches your RegExp matches order
+    // for example they are different for this custom RegExp
+
+	urlRegexPathMatchIndex: 1, // 1, the default urlRegex's is 1
+  	urlRegexRestMatchIndex: 5, // 2, the default urlRegex's is 2
+  	urlRegexDelimiterMatchIndex: 6 // 3, the default urlRegex's is 2
 
   */
 };

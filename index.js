@@ -5,6 +5,9 @@ var _ = require('lodash');
 
 var uniq = _.uniq;
 var extend = _.extend;
+var isInteger = function(n) {
+  return  !isNaN(parseFloat(n)) && isFinite(n) && n % 1 === 0;
+};
 
 var escapeRegExp = function(str) {
   return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
@@ -28,7 +31,7 @@ var extractPaths = function(urlRegex, content) {
   var match;
 
   while (match = urlRegex.exec(content)) {
-    paths.push(match[1]);
+    paths.push(match[globalOptions.urlRegexPathMatchIndex]);
   }
 
   return paths;
@@ -49,12 +52,16 @@ var createFullPath = function(basePath, currentPath) {
 };
 
 var replaceUrlsWithSprite = function(urlRegex, prefixRegex, options, content, coords) {
-  return content.replace(urlRegex, function(match, path, rest, delimiter) {
+  return content.replace(urlRegex, function(match/*, path, rest, delimiter */) {
+
+    var path = arguments[globalOptions.urlRegexPathMatchIndex];
+    var rest = arguments[globalOptions.urlRegexRestMatchIndex];
+
     var coord = coords[createFullPath(options.path, removeBasePath(prefixRegex, path))];
     var css = createCSSPropertiesFor(coord);
 
     rest = normalizeRest(rest);
-    delimiter = normalizeDelimiter(delimiter);
+    var delimiter = normalizeDelimiter(arguments[isInteger(globalOptions.urlRegexDelimiterMatchIndex) ? globalOptions.urlRegexDelimiterMatchIndex : arguments.length - 1]);
 
     return 'url(' + options.name + ')' + rest + '; ' + css + delimiter;
   });
@@ -64,8 +71,13 @@ var defaultOptions = {
   name: 'sprite.png',
   path: 'images/sprites',
   prefix: '/images/sprites/',
-  urlRegex: null
+  urlRegex: null,
+
+  urlRegexPathMatchIndex: 1,
+  urlRegexRestMatchIndex: 2,
+  urlRegexDelimiterMatchIndex: 3
 };
+var globalOptions;
 
 var getFullPaths = function(prefixRegex, urlRegex, basePath, cssContent) {
   var paths = uniq(findPaths(prefixRegex, urlRegex, cssContent));
@@ -77,6 +89,7 @@ var getFullPaths = function(prefixRegex, urlRegex, basePath, cssContent) {
 
 var sprite = function(options, cssContent, callback) {
   options = extend({}, defaultOptions, options);
+  globalOptions = options;
 
   var prefixRegex = new RegExp(escapeRegExp(options.prefix));
   var urlRegex = options.urlRegex || new RegExp("url\\((?:'|\")?(" + escapeRegExp(options.prefix) + ".*?)(?:'|\")?\\)(?:(.*?|\\n*?|\\r*?))(;|})", 'gi');
